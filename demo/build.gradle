@@ -1,7 +1,9 @@
 group = 'edu.gwu.cs6431.multi-chat.demo'
 version = "${rootProject.version}"
 
-//mainClassName = "edu.gwu.cs6431.multi-chat.demo.Main"
+apply plugin: 'application'
+mainClassName = 'edu.gwu.cs6431.multichat.demo.client.DemoClient'
+
 dependencies {
     compile project(':core')
 }
