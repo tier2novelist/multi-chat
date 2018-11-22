@@ -1,6 +1,6 @@
 package edu.gwu.cs6431.multichat.core.server;
 
-import edu.gwu.cs6431.multichat.core.protocol.ClientMessage;
+import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.server.session.Session;
 
 import java.io.IOException;
