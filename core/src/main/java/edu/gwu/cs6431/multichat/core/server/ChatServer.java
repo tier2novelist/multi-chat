@@ -1,6 +1,7 @@
 package edu.gwu.cs6431.multichat.core.server;
 
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
+import edu.gwu.cs6431.multichat.core.server.service.SessionService;
 import edu.gwu.cs6431.multichat.core.server.session.Session;
 
 import java.io.IOException;
@@ -46,17 +47,39 @@ public class ChatServer implements Server {
 
     @Override
     public void onSessionOpened(Session session) {
-
+        SessionService.getInstance().addSession(session);
     }
 
     @Override
     public void onSessionClosed(Session session) {
-
+        SessionService.getInstance().removeSession(session);
     }
 
     @Override
     public void onMessageReceived(Session session, ClientMessage message) {
-        System.out.println(new String(message.getPayload()));
+        switch (message.getType()) {
+            case "chat":
+                if(message.getTo() != null) {
+                    // private chat
+                } else {
+                    // public chat
+                }
+                break;
+            case "query":
+//                session.write();
+                break;
+            case "fetch":
+                // file id
+                message.getPayload();
+//                session.write();
+                break;
+            case "nickname":
+                session.setNickname(new String(message.getPayload()));
+                break;
+            case "bye":
+                session.close();
+                break;
+        }
     }
 
     public static void main(String[] args) {

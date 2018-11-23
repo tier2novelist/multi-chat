@@ -47,8 +47,6 @@ public class Session {
     public Session(Socket socket, SessionListener sessionListener) {
         this.socket = socket;
         this.sessionListener = sessionListener;
-        // TODO generate from util
-        this.id = 0;
         this.alive = true;
 
         try {
@@ -114,5 +112,21 @@ public class Session {
 
         readWorker.start();
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
