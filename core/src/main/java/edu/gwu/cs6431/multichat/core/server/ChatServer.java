@@ -42,21 +42,25 @@ public class ChatServer implements Server {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onSessionOpened(Session session) {
 
     }
 
     @Override
-    public void onSessionStart(Session session) {
+    public void onSessionClosed(Session session) {
 
     }
 
     @Override
-    public void onSessionFinish(Session session) {
-
+    public void onMessageReceived(Session session, ClientMessage message) {
+        System.out.println(new String(message.getPayload()));
     }
 
-    @Override
-    public void onMessageReceived(ClientMessage message) {
-
+    public static void main(String[] args) {
+        Server server = new ChatServer();
+        server.start();
     }
 }

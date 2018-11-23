@@ -2,12 +2,11 @@ package edu.gwu.cs6431.multichat.core.protocol.client;
 
 import edu.gwu.cs6431.multichat.core.protocol.Payload;
 
-import java.io.File;
 
 public class ClientMessage {
 
     @HeaderField(name = "Message-Type")
-    private MessageType type;
+    private String type;
 
     @HeaderField(name = "Message-ID")
     private Integer id;
@@ -22,12 +21,57 @@ public class ClientMessage {
     private Integer contentLength;
 
     @Payload
-    private String textPayload;
-
-    @Payload(binary = true)
-    private File filePayload;
+    private byte[] payload;
 
     public ClientMessage() {
 
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public byte[] getPayload() {
+        return payload;
+    }
+
+    public void setPayload(byte[] payload) {
+        this.payload = payload;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getTo() {
+        return to;
+    }
+
+    public void setTo(Integer to) {
+        this.to = to;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Integer getContentLength() {
+        return contentLength;
+    }
+
+    public void setContentLength(Integer contentLength) {
+        this.contentLength = contentLength;
     }
 }
