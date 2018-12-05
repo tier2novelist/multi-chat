@@ -9,12 +9,31 @@ version = '1.0-SNAPSHOT'
 
 subprojects {
     apply plugin: 'java'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     ext {
         compileJava.options.encoding = 'UTF-8'
         compileTestJava.options.encoding = 'UTF-8'
     }
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    
+    repositories {
+        mavenCentral()
+    }
+    
+    dependencies {
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+    }
+    
+    sourceSets {
+        main {
+            java{
+                srcDir 'src/main/java'
+            }
+            resources {
+//                srcDir 'src/main/java'
+                srcDir 'src/main/resources'
+            }
+        }
+    }
 }
