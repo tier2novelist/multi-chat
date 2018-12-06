@@ -1,12 +1,11 @@
 package edu.gwu.cs6431.multichat.core.protocol.server;
 
 import edu.gwu.cs6431.multichat.core.protocol.Payload;
-import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 
 public class ResponseMessage implements ServerMessage {
 
     @HeaderField(name = "Status", inherited = false)
-    private String status;
+    private ResponseStatus status;
 
     @HeaderField(name = "Message-Type")
     private String type;
@@ -23,17 +22,11 @@ public class ResponseMessage implements ServerMessage {
     @Payload
     private byte[] payload;
 
-    @Override
-    public ResponseMessage generateFrom(ClientMessage clientMessage) {
-
-        return this;
-    }
-
-    public String getStatus() {
+    public ResponseStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ResponseStatus status) {
         this.status = status;
     }
 

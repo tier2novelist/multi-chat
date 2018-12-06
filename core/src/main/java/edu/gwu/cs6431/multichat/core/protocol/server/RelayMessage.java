@@ -1,13 +1,13 @@
 package edu.gwu.cs6431.multichat.core.protocol.server;
 
 import edu.gwu.cs6431.multichat.core.protocol.Payload;
-import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
+import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 
 
 public class RelayMessage implements ServerMessage {
 
     @HeaderField(name = "Message-Type")
-    private String type;
+    private MessageType type;
 
     @HeaderField(name = "To", required = false)
     private Integer to;
@@ -30,17 +30,11 @@ public class RelayMessage implements ServerMessage {
     @Payload
     private byte[] payload;
 
-    @Override
-    public RelayMessage generateFrom(ClientMessage clientMessage) {
-
-        return this;
-    }
-
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 

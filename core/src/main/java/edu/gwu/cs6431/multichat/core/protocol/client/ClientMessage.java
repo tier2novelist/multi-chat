@@ -6,7 +6,7 @@ import edu.gwu.cs6431.multichat.core.protocol.Payload;
 public class ClientMessage {
 
     @HeaderField(name = "Message-Type")
-    private String type;
+    private MessageType type;
 
     @HeaderField(name = "Message-ID")
     private Integer id;
@@ -27,11 +27,11 @@ public class ClientMessage {
 
     }
 
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 
