@@ -1,8 +1,13 @@
 package edu.gwu.cs6431.multichat.core.server.session;
 
+import edu.gwu.cs6431.multichat.core.protocol.Payload;
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.protocol.client.HeaderField;
+import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
+import edu.gwu.cs6431.multichat.core.protocol.server.RelayMessage;
+import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -14,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Session {
 
@@ -27,8 +34,72 @@ public class Session {
     private Thread readWorker;
     private boolean alive;
 
+    private static ExecutorService pool = Executors.newCachedThreadPool();
+
     public void write(ServerMessage serverMessage) {
-//        this.dos.write();
+        Runnable writeTask = () -> {
+            Class messageClass = null;
+            if(serverMessage instanceof RelayMessage) {
+                messageClass = RelayMessage.class;
+            } else if(serverMessage instanceof ResponseMessage) {
+                messageClass = ResponseMessage.class;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            byte[] payload = null;
+
+            Field[] fields = messageClass.getDeclaredFields();
+            for(Field field : fields) {
+                if (field.isAnnotationPresent(edu.gwu.cs6431.multichat.core.protocol.server.HeaderField.class)) {
+                    edu.gwu.cs6431.multichat.core.protocol.server.HeaderField headerField = field.getAnnotation(edu.gwu.cs6431.multichat.core.protocol.server.HeaderField.class);
+                    try {
+                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), messageClass);
+                        Object fieldValue = prop.getReadMethod().invoke(serverMessage);
+                        if(fieldValue == null && headerField.required()) {
+                            // TODO required field missing, throw Exception
+                        } else if(fieldValue != null) {
+                            switch (field.getType().getSimpleName()) {
+                                case "String":
+                                    sb.append(headerField.name() + " " + fieldValue);
+                                    sb.append(System.lineSeparator());
+                                    break;
+                                case "Integer":
+                                    sb.append(headerField.name() + " " + fieldValue);
+                                    sb.append(System.lineSeparator());
+                                    break;
+                                case "MessageType":
+                                    sb.append(headerField.name() + " " + ((MessageType) fieldValue).name());
+                                    sb.append(System.lineSeparator());
+                                    break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if(field.isAnnotationPresent(Payload.class)) {
+                    try {
+                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), messageClass);
+                        payload = (byte[]) prop.getReadMethod().invoke(serverMessage);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            try {
+                sb.append(System.lineSeparator());
+                this.dos.writeBytes(sb.toString());
+                if(payload != null) {
+                    this.dos.write(payload);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        };
+
+        pool.submit(writeTask);
     }
 
     public void close() {
@@ -62,9 +133,13 @@ public class Session {
 
                     Map<String, String> headers = new HashMap<>();
                     String line;
-                    while(!"".equals(line = dis.readLine())) {
+                    while(StringUtils.isNotEmpty(line = dis.readLine())) {
                         String[] parts = line.split(" ");
                         headers.put(parts[0], parts[1]);
+                    }
+
+                    if(headers.isEmpty()) {
+                       continue;
                     }
 
                     ClientMessage clientMessage = new ClientMessage();
@@ -83,6 +158,9 @@ public class Session {
                                         break;
                                     case "String":
                                         prop.getWriteMethod().invoke(clientMessage, fieldValue);
+                                        break;
+                                    case "MessageType":
+                                        prop.getWriteMethod().invoke(clientMessage, MessageType.valueOf(fieldValue));
                                         break;
                                 }
                             }

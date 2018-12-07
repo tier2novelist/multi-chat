@@ -19,8 +19,13 @@ public class SessionService {
 
     private List<Session> sessions;
 
+    private int sessionCounter;
+
     public void addSession(Session session) {
-//        session.setId();
+        synchronized (this) {
+            this.sessionCounter++;
+        }
+        session.setId(this.sessionCounter);
         this.sessions.add(session);
     }
 
