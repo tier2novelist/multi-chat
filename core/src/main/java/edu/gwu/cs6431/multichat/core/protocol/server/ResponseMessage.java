@@ -1,6 +1,7 @@
 package edu.gwu.cs6431.multichat.core.protocol.server;
 
 import edu.gwu.cs6431.multichat.core.protocol.Payload;
+import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 
 public class ResponseMessage implements ServerMessage {
 
@@ -8,7 +9,7 @@ public class ResponseMessage implements ServerMessage {
     private ResponseStatus status;
 
     @HeaderField(name = "Message-Type")
-    private String type;
+    private MessageType type;
 
     @HeaderField(name = "Message-ID")
     private Integer id;
@@ -30,11 +31,11 @@ public class ResponseMessage implements ServerMessage {
         this.status = status;
     }
 
-    public String getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 
