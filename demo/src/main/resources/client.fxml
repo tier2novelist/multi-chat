@@ -1,14 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="edu.gwu.cs6431.multichat.demo.client.component.ClientController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.gwu.cs6431.multichat.demo.client.component.ClientController">
+   <children>
+      <Pane prefHeight="340.0" prefWidth="600.0">
+         <children>
+            <ListView fx:id="chatListView" prefHeight="335.0" prefWidth="600.0" />
+         </children></Pane>
+      <HBox layoutY="340.0" prefHeight="30.0" prefWidth="600.0">
+         <children>
+            <ChoiceBox prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin></ChoiceBox>
+            <Button mnemonicParsing="false" text="Refresh" fx:id="refreshButton" onMouseClicked="#handleRefreshButtonClick">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="shareFileButton" mnemonicParsing="false" onMouseClicked="#handleShareFileButtonClick" text="Share File">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+            <TextField fx:id="nicknameField" promptText="Nickname Here">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </TextField>
+            <Button fx:id="setNicknameButton" mnemonicParsing="false" onMouseClicked="#handleSetNicknameButtonClick" text="Set">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Bye" fx:id="byeButton" onMouseClicked="#handleByeButtonClick">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Button>
+         </children></HBox>
+      <HBox layoutY="370.0" prefHeight="30.0" prefWidth="600.0">
+         <children>
+            <TextField fx:id="textMessageField" prefHeight="20.0" prefWidth="500.0">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin></TextField>
+            <Button fx:id="sendTextMessageButton" mnemonicParsing="false" onMouseClicked="#handleSendTextButtonClick" text="Send">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin></Button>
+         </children></HBox>
+   </children>
 </AnchorPane>
