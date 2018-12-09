@@ -7,7 +7,7 @@ public interface Client {
     void stop();
     void chat(String text);
     void chat(File file);
-    File fetch(int fileId);
+    void fetch(int fileId);
     void nickname(String nickname);
     void bye();
     void query();

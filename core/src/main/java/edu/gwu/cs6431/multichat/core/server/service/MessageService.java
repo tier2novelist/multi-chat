@@ -1,5 +1,6 @@
 package edu.gwu.cs6431.multichat.core.server.service;
 
+import edu.gwu.cs6431.multichat.core.protocol.ProtocolProps;
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.RelayMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
@@ -40,11 +41,13 @@ public class MessageService {
             source.write(responseMessage);
             throw new SessionNotExistException(relayMessage.getTo());
         } else {
-            if(!"text".equals(message.getContentType())) {
+            if(!ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
                 synchronized (this) {
                     this.shareFileList.add(message);
                     relayMessage.setFileId(shareFileList.size() - 1);
                 }
+            } else {
+                relayMessage.setPayload(message.getPayload());
             }
             target.write(relayMessage);
             source.write(responseMessage);
@@ -56,11 +59,13 @@ public class MessageService {
         relayMessage.setFrom(source.getId());
         relayMessage.setNickname(source.getNickname());
         relayMessage.from(message);
-        if(!"text".equals(message.getContentType())) {
+        if(!ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
             synchronized (this) {
                 this.shareFileList.add(message);
                 relayMessage.setFileId(shareFileList.size() - 1);
             }
+        } else {
+            relayMessage.setPayload(message.getPayload());
         }
 
         List<Session> sessions = SessionService.getInstance().listSession();
@@ -94,7 +99,7 @@ public class MessageService {
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
-        responseMessage.setContentType("text");
+        responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
         responseMessage.setPayload(sb.toString().getBytes());
         responseMessage.setContentLength(responseMessage.getPayload().length);
 

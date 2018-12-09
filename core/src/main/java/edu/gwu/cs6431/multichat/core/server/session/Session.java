@@ -4,8 +4,7 @@ import edu.gwu.cs6431.multichat.core.protocol.Payload;
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.protocol.client.HeaderField;
 import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
-import edu.gwu.cs6431.multichat.core.protocol.server.RelayMessage;
-import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
+import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,22 +37,16 @@ public class Session {
 
     public void write(ServerMessage serverMessage) {
         Runnable writeTask = () -> {
-            Class messageClass = null;
-            if(serverMessage instanceof RelayMessage) {
-                messageClass = RelayMessage.class;
-            } else if(serverMessage instanceof ResponseMessage) {
-                messageClass = ResponseMessage.class;
-            }
 
             StringBuilder sb = new StringBuilder();
             byte[] payload = null;
 
-            Field[] fields = messageClass.getDeclaredFields();
+            Field[] fields = serverMessage.getClass().getDeclaredFields();
             for(Field field : fields) {
                 if (field.isAnnotationPresent(edu.gwu.cs6431.multichat.core.protocol.server.HeaderField.class)) {
                     edu.gwu.cs6431.multichat.core.protocol.server.HeaderField headerField = field.getAnnotation(edu.gwu.cs6431.multichat.core.protocol.server.HeaderField.class);
                     try {
-                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), messageClass);
+                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), serverMessage.getClass());
                         Object fieldValue = prop.getReadMethod().invoke(serverMessage);
                         if(fieldValue == null && headerField.required()) {
                             // TODO required field missing, throw Exception
@@ -71,6 +64,10 @@ public class Session {
                                     sb.append(headerField.name() + " " + ((MessageType) fieldValue).name());
                                     sb.append(System.lineSeparator());
                                     break;
+                                case "ResponseStatus":
+                                    sb.append(headerField.name() + " " + ((ResponseStatus) fieldValue).name());
+                                    sb.append(System.lineSeparator());
+                                    break;
                             }
                         }
                     } catch (Exception e) {
@@ -78,7 +75,7 @@ public class Session {
                     }
                 } else if(field.isAnnotationPresent(Payload.class)) {
                     try {
-                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), messageClass);
+                        PropertyDescriptor prop = new PropertyDescriptor(field.getName(), serverMessage.getClass());
                         payload = (byte[]) prop.getReadMethod().invoke(serverMessage);
 
                     } catch (Exception e) {
@@ -168,9 +165,9 @@ public class Session {
                     }
 
                     if(clientMessage.getContentLength() != null && clientMessage.getContentLength() > 0) {
-                        byte[] contentBuffer = new byte[clientMessage.getContentLength()];
-                        dis.read(contentBuffer);
-                        clientMessage.setPayload(contentBuffer);
+                        byte[] payloadBuffer = new byte[clientMessage.getContentLength()];
+                        dis.read(payloadBuffer);
+                        clientMessage.setPayload(payloadBuffer);
                     }
 
                     this.sessionListener.onMessageReceived(this, clientMessage);
@@ -188,7 +185,8 @@ public class Session {
             }
         });
 
-        readWorker.start();
+        this.readWorker.start();
+        this.sessionListener.onSessionOpened(this);
 
     }
 

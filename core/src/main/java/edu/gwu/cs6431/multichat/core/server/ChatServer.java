@@ -87,9 +87,4 @@ public class ChatServer implements Server {
                 break;
         }
     }
-
-    public static void main(String[] args) {
-        Server server = new ChatServer();
-        server.start();
-    }
 }

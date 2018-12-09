@@ -23,9 +23,9 @@ public class SessionService {
 
     public void addSession(Session session) {
         synchronized (this) {
+            session.setId(this.sessionCounter);
             this.sessionCounter++;
         }
-        session.setId(this.sessionCounter);
         this.sessions.add(session);
     }
 
