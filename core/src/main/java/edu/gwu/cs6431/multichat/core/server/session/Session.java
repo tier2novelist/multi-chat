@@ -7,7 +7,7 @@ import edu.gwu.cs6431.multichat.core.protocol.client.HeaderField;
 import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
-import edu.gwu.cs6431.multichat.core.server.exception.SessionNotExistException;
+import edu.gwu.cs6431.multichat.core.server.exception.ClientLostException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.IntrospectionException;
@@ -94,7 +94,7 @@ public class Session {
                 }
             } catch (SocketException e) {
                 e.printStackTrace();
-                this.sessionListener.onSessionError(this, new SessionNotExistException(this.id));
+                this.sessionListener.onSessionError(this, new ClientLostException(this.id));
             } catch (IOException e) {
                 e.printStackTrace();
             }

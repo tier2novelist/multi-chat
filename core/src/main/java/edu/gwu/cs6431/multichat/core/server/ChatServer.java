@@ -1,6 +1,7 @@
 package edu.gwu.cs6431.multichat.core.server;
 
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
+import edu.gwu.cs6431.multichat.core.server.exception.ClientLostException;
 import edu.gwu.cs6431.multichat.core.server.exception.SessionNotExistException;
 import edu.gwu.cs6431.multichat.core.server.service.MessageService;
 import edu.gwu.cs6431.multichat.core.server.service.SessionService;
@@ -90,7 +91,7 @@ public class ChatServer implements Server {
 
     @Override
     public void onSessionError(Session session, Throwable error) {
-        if(error instanceof SessionNotExistException) {
+        if(error instanceof ClientLostException) {
             session.close();
         }
     }
