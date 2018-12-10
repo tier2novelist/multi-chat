@@ -3,6 +3,7 @@ package edu.gwu.cs6431.multichat.demo.client.component;
 import edu.gwu.cs6431.multichat.core.client.ChatClient;
 import edu.gwu.cs6431.multichat.core.client.Client;
 import edu.gwu.cs6431.multichat.core.client.EventListener;
+import edu.gwu.cs6431.multichat.core.protocol.ProtocolProps;
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 import edu.gwu.cs6431.multichat.core.protocol.server.RelayMessage;
@@ -10,18 +11,28 @@ import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.demo.client.component.vo.ChatMessageVO;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
 
 public class ClientController implements EventListener {
 
     private Client client;
+
+    @FXML
+    private ChoiceBox userChoiceBox;
 
     @FXML
     private VBox chatMessageVBox;
@@ -49,6 +60,8 @@ public class ClientController implements EventListener {
 
     private FileChooser fileChooser = new FileChooser();
 
+    private DirectoryChooser directoryChooser = new DirectoryChooser();
+
     {
         this.client = new ChatClient(this);
         this.client.start();
@@ -57,7 +70,16 @@ public class ClientController implements EventListener {
     @FXML
     void handleShareFileButtonClick(MouseEvent mouseEvent) {
         File file = fileChooser.showOpenDialog(this.shareFileButton.getScene().getWindow());
-        client.chat(file);
+        try {
+            client.chat(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Cannot read file!");
+            alert.showAndWait();
+        }
     }
 
     @FXML
@@ -79,7 +101,15 @@ public class ClientController implements EventListener {
     @FXML
     void handleByeButtonClick(MouseEvent mouseEvent) {
         client.bye();
-        // TODO show dialog, then client.close()
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Bye");
+        alert.setHeaderText(null);
+        alert.setContentText("Shutting down...");
+        alert.showAndWait();
+
+        client.stop();
+        Platform.exit();
     }
 
     @Override
@@ -89,23 +119,77 @@ public class ClientController implements EventListener {
                 case CHAT:
                     break;
                 case QUERY:
-                    System.out.println(new String(message.getPayload()));
+                    if(message.getContentLength() != null && message.getContentLength() > 0) {
+                        String userList = new String(message.getPayload());
+                        if(StringUtils.isNotEmpty(userList)) {
+                            ObservableList<String> users = FXCollections.observableArrayList(userList.split(System.lineSeparator()));
+                            Platform.runLater(() -> {
+                                userChoiceBox.getItems().clear();
+                                userChoiceBox.getItems().addAll(users);
+                            });
+                        }
+                    } else {
+                        Platform.runLater(() -> {
+                            userChoiceBox.getItems().clear();
+                        });
+                    }
                     break;
                 case FETCH:
+
+                    Platform.runLater(() -> {
+                        File destFileDir = this.directoryChooser.showDialog(this.shareFileButton.getScene().getWindow());
+                        if(destFileDir != null && destFileDir.isDirectory()) {
+                            try {
+                                String fileName = StringUtils.join(new Date(),".",message.getContentType());
+                                File destFile = new File(destFileDir, fileName);
+                                FileUtils.writeByteArrayToFile(destFile, message.getPayload());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Alert alert = new Alert(Alert.AlertType.WARNING);
+                                alert.setTitle("Error");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Cannot write file!");
+                                alert.showAndWait();
+                            }
+                        }
+                    });
                     break;
                 case NICKNAME:
                     break;
             }
 
         } else if(ResponseStatus.ERROR.equals(message.getStatus())) {
-
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText(new String(message.getPayload()));
+                alert.showAndWait();
+            });
         }
     }
 
     @Override
     public void onRelayMessageReceived(RelayMessage message) {
         if(MessageType.CHAT.equals(message.getType())) {
-            Platform.runLater(() -> chatMessageVBox.getChildren().add(new ChatMessageVO(message)));
+            Platform.runLater(() -> {
+                chatMessageVBox.getChildren().add(new ChatMessageVO(message));
+
+                if(!StringUtils.equals(ProtocolProps.TEXT_CONTENT, message.getContentType())) {
+
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Fetch File");
+                    alert.setHeaderText(null);
+                    alert.setContentText(StringUtils.join("File type: ", message.getContentType(), System.lineSeparator(), "File size: ", message.getContentLength(), " bytes"));
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        this.client.fetch(message.getFileId());
+                    } else {
+                        // do nothing if choose cancel
+                    }
+                }
+            });
         }
     }
 
@@ -113,6 +197,16 @@ public class ClientController implements EventListener {
     public void onClientMessageSent(ClientMessage message) {
         if(MessageType.CHAT.equals(message.getType())) {
             Platform.runLater(() -> chatMessageVBox.getChildren().add(new ChatMessageVO(message)));
+        }
+    }
+
+    @Override
+    public void beforeClientMessageSent(ClientMessage message) {
+        if(MessageType.CHAT.equals(message.getType())) {
+            String to = (String) userChoiceBox.getValue();
+            if(StringUtils.isNotEmpty(to)) {
+                message.setTo(Integer.parseInt(to));
+            }
         }
     }
 }

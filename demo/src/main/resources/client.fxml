@@ -11,13 +11,13 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.gwu.cs6431.multichat.demo.client.component.ClientController">
    <children>
-      <ScrollPane prefHeight="340.0" prefWidth="600.0">
+      <ScrollPane hbarPolicy="NEVER" prefHeight="340.0" prefWidth="600.0">
          <content>
-            <VBox prefHeight="335.0" prefWidth="600.0" fx:id="chatMessageVBox" />
+            <VBox fx:id="chatMessageVBox" prefHeight="335.0" prefWidth="600.0" />
          </content></ScrollPane>
       <HBox layoutY="340.0" prefHeight="30.0" prefWidth="600.0">
          <children>
-            <ChoiceBox prefWidth="150.0">
+            <ChoiceBox prefWidth="150.0" fx:id="userChoiceBox">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin></ChoiceBox>
