@@ -8,11 +8,13 @@ public final class ProtocolProps {
         SERVER_IP_ADDR = rb.getString("SERVER_IP_ADDR");
         SERVER_PORT = Integer.parseInt(rb.getString("SERVER_PORT"));
 
-        TEXT_CONTENT= rb.getString("TEXT_CONTENT");
+        TEXT_CONTENT = rb.getString("TEXT_CONTENT");
+        HEADER_FIELD_SEPARATOR = rb.getString("HEADER_FIELD_SEPARATOR");
     }
 
     public static final String SERVER_IP_ADDR;
     public static final int SERVER_PORT;
 
     public static final String TEXT_CONTENT;
+    public static final String HEADER_FIELD_SEPARATOR;
 }

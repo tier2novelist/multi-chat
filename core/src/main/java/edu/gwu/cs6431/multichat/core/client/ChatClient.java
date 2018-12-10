@@ -10,6 +10,8 @@ import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
 import edu.gwu.cs6431.multichat.core.server.Server;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.PropertyDescriptor;
@@ -82,14 +84,14 @@ public class ChatClient implements Client {
     }
 
     @Override
-    public void chat(File file) {
+    public void chat(File file) throws IOException {
         if(file == null || !file.isFile()) {
             return;
         }
         ClientMessage message = new ClientMessage();
         message.setType(MessageType.CHAT);
-//        message.setContentType();
-//        message.setPayload();
+        message.setContentType(FilenameUtils.getExtension(file.getName()));
+        message.setPayload(FileUtils.readFileToByteArray(file));
         message.setContentLength(message.getPayload().length);
         this.send(message);
     }
@@ -136,6 +138,9 @@ public class ChatClient implements Client {
             message.setId(messageCounter);
             this.messageCounter++;
         }
+
+        this.eventListener.beforeClientMessageSent(message);
+
         Runnable task = () -> {
             StringBuilder sb = new StringBuilder();
             byte[] payload = null;
@@ -150,12 +155,12 @@ public class ChatClient implements Client {
                         if(fieldValue != null) {
                             switch (field.getType().getSimpleName()) {
                                 case "MessageType":
-                                    sb.append(headerField.name() + " " + ((MessageType) fieldValue).name());
+                                    sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((MessageType) fieldValue).name()));
                                     sb.append(System.lineSeparator());
                                     break;
 
                                     default:
-                                        sb.append(headerField.name() + " " + fieldValue);
+                                        sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
                                         sb.append(System.lineSeparator());
 
                             }
@@ -198,7 +203,7 @@ public class ChatClient implements Client {
                     Map<String, String> headers = new HashMap<>();
                     String line;
                     while (StringUtils.isNotEmpty(line = this.dis.readLine())) {
-                        String[] parts = line.split(" ");
+                        String[] parts = line.split(ProtocolProps.HEADER_FIELD_SEPARATOR);
                         headers.put(parts[0], parts[1]);
                     }
 
@@ -251,13 +256,16 @@ public class ChatClient implements Client {
                         this.eventListener.onResponseMessageReceived((ResponseMessage) serverMessage);
 
                     } else if(serverMessage instanceof RelayMessage) {
-                        Integer contentLength = ((RelayMessage) serverMessage).getContentLength();
-                        if(contentLength != null && contentLength > 0) {
-                            byte[] payloadBuffer = new byte[contentLength];
-                            dis.read(payloadBuffer);
-                            ((RelayMessage) serverMessage).setPayload(payloadBuffer);
+                        if(StringUtils.equals(ProtocolProps.TEXT_CONTENT, ((RelayMessage) serverMessage).getContentType())) {
+                            Integer contentLength = ((RelayMessage) serverMessage).getContentLength();
+                            if(contentLength != null && contentLength > 0) {
+                                byte[] payloadBuffer = new byte[contentLength];
+                                dis.read(payloadBuffer);
+                                ((RelayMessage) serverMessage).setPayload(payloadBuffer);
+                            }
+                        } else {
+                          // Do not read when sharing file, payload not presented
                         }
-
                         this.eventListener.onRelayMessageReceived((RelayMessage) serverMessage);
 
                     }

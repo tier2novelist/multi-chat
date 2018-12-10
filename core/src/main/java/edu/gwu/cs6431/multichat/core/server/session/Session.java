@@ -1,6 +1,7 @@
 package edu.gwu.cs6431.multichat.core.server.session;
 
 import edu.gwu.cs6431.multichat.core.protocol.Payload;
+import edu.gwu.cs6431.multichat.core.protocol.ProtocolProps;
 import edu.gwu.cs6431.multichat.core.protocol.client.ClientMessage;
 import edu.gwu.cs6431.multichat.core.protocol.client.HeaderField;
 import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
@@ -53,19 +54,19 @@ public class Session {
                         } else if(fieldValue != null) {
                             switch (field.getType().getSimpleName()) {
                                 case "String":
-                                    sb.append(headerField.name() + " " + fieldValue);
+                                    sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
                                     sb.append(System.lineSeparator());
                                     break;
                                 case "Integer":
-                                    sb.append(headerField.name() + " " + fieldValue);
+                                    sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
                                     sb.append(System.lineSeparator());
                                     break;
                                 case "MessageType":
-                                    sb.append(headerField.name() + " " + ((MessageType) fieldValue).name());
+                                    sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((MessageType) fieldValue).name()));
                                     sb.append(System.lineSeparator());
                                     break;
                                 case "ResponseStatus":
-                                    sb.append(headerField.name() + " " + ((ResponseStatus) fieldValue).name());
+                                    sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((ResponseStatus) fieldValue).name()));
                                     sb.append(System.lineSeparator());
                                     break;
                             }
@@ -131,7 +132,7 @@ public class Session {
                     Map<String, String> headers = new HashMap<>();
                     String line;
                     while(StringUtils.isNotEmpty(line = dis.readLine())) {
-                        String[] parts = line.split(" ");
+                        String[] parts = line.split(ProtocolProps.HEADER_FIELD_SEPARATOR);
                         headers.put(parts[0], parts[1]);
                     }
 

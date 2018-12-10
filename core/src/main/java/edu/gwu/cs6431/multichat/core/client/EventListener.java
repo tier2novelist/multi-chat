@@ -8,4 +8,5 @@ public interface EventListener {
     void onResponseMessageReceived(ResponseMessage message);
     void onRelayMessageReceived(RelayMessage message);
     void onClientMessageSent(ClientMessage message);
+    void beforeClientMessageSent(ClientMessage message);
 }

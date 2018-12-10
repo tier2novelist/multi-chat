@@ -7,6 +7,7 @@ import edu.gwu.cs6431.multichat.core.protocol.server.ResponseMessage;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.server.exception.SessionNotExistException;
 import edu.gwu.cs6431.multichat.core.server.session.Session;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,7 +42,7 @@ public class MessageService {
             source.write(responseMessage);
             throw new SessionNotExistException(relayMessage.getTo());
         } else {
-            if(!ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
+            if(!StringUtils.equals(ProtocolProps.TEXT_CONTENT, message.getContentType())) {
                 synchronized (this) {
                     this.shareFileList.add(message);
                     relayMessage.setFileId(shareFileList.size() - 1);
@@ -59,7 +60,7 @@ public class MessageService {
         relayMessage.setFrom(source.getId());
         relayMessage.setNickname(source.getNickname());
         relayMessage.from(message);
-        if(!ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
+        if(!StringUtils.equals(ProtocolProps.TEXT_CONTENT, message.getContentType())) {
             synchronized (this) {
                 this.shareFileList.add(message);
                 relayMessage.setFileId(shareFileList.size() - 1);
@@ -113,10 +114,10 @@ public class MessageService {
         // get file id from payload
         int fileId = Integer.parseInt(new String(message.getPayload()));
         if(fileId < shareFileList.size()) {
-            ClientMessage stagedMesssage = shareFileList.get(fileId);
-            responseMessage.setContentType(stagedMesssage.getContentType());
-            responseMessage.setContentLength(stagedMesssage.getContentLength());
-            responseMessage.setPayload(stagedMesssage.getPayload());
+            ClientMessage stagedMessage = shareFileList.get(fileId);
+            responseMessage.setContentType(stagedMessage.getContentType());
+            responseMessage.setContentLength(stagedMessage.getContentLength());
+            responseMessage.setPayload(stagedMessage.getPayload());
             responseMessage.setStatus(ResponseStatus.OK);
         } else {
             // invalid file id
