@@ -38,9 +38,13 @@ public class MessageService {
 
         Session target = SessionService.getInstance().findSessionById(relayMessage.getTo());
         if(target == null) {
+            SessionNotExistException sessionNotExistException = new SessionNotExistException(relayMessage.getTo());
             responseMessage.setStatus(ResponseStatus.ERROR);
+            responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
+            responseMessage.setPayload(sessionNotExistException.getMessage().getBytes());
+            responseMessage.setContentLength(responseMessage.getPayload().length);
             source.write(responseMessage);
-            throw new SessionNotExistException(relayMessage.getTo());
+            throw sessionNotExistException;
         } else {
             if(!StringUtils.equals(ProtocolProps.TEXT_CONTENT, message.getContentType())) {
                 synchronized (this) {

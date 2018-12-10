@@ -7,6 +7,7 @@ import edu.gwu.cs6431.multichat.core.protocol.client.HeaderField;
 import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
+import edu.gwu.cs6431.multichat.core.server.exception.SessionNotExistException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.IntrospectionException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -90,6 +92,9 @@ public class Session {
                 if(payload != null) {
                     this.dos.write(payload);
                 }
+            } catch (SocketException e) {
+                e.printStackTrace();
+                this.sessionListener.onSessionError(this, new SessionNotExistException(this.id));
             } catch (IOException e) {
                 e.printStackTrace();
             }

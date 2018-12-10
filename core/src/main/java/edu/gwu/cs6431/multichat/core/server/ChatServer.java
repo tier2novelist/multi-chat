@@ -87,4 +87,11 @@ public class ChatServer implements Server {
                 break;
         }
     }
+
+    @Override
+    public void onSessionError(Session session, Throwable error) {
+        if(error instanceof SessionNotExistException) {
+            session.close();
+        }
+    }
 }
