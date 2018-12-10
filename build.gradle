@@ -23,6 +23,7 @@ subprojects {
     
     dependencies {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+        compile group: 'commons-io', name: 'commons-io', version: '2.6'
     }
     
     sourceSets {
