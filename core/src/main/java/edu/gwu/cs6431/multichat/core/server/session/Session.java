@@ -8,6 +8,7 @@ import edu.gwu.cs6431.multichat.core.protocol.client.MessageType;
 import edu.gwu.cs6431.multichat.core.protocol.server.ResponseStatus;
 import edu.gwu.cs6431.multichat.core.protocol.server.ServerMessage;
 import edu.gwu.cs6431.multichat.core.server.exception.ClientLostException;
+import edu.gwu.cs6431.multichat.core.server.exception.MalformedMessageException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.IntrospectionException;
@@ -52,7 +53,7 @@ public class Session {
                         PropertyDescriptor prop = new PropertyDescriptor(field.getName(), serverMessage.getClass());
                         Object fieldValue = prop.getReadMethod().invoke(serverMessage);
                         if(fieldValue == null && headerField.required()) {
-                            // TODO required field missing, throw Exception
+                            this.sessionListener.onSessionError(this, new MalformedMessageException(headerField.name()));
                         } else if(fieldValue != null) {
                             switch (field.getType().getSimpleName()) {
                                 case "String":
@@ -148,25 +149,29 @@ public class Session {
                     ClientMessage clientMessage = new ClientMessage();
                     Field[] fields = ClientMessage.class.getDeclaredFields();
                     for(Field field : fields) {
-                        if(field.isAnnotationPresent(HeaderField.class)) {
-                            HeaderField headerField = field.getAnnotation(HeaderField.class);
-                            PropertyDescriptor prop = new PropertyDescriptor(field.getName(), ClientMessage.class);
-                            String fieldValue = headers.get(headerField.name());
-                            if(fieldValue == null && headerField.required()) {
-                                // TODO required field missing, throw Exception
-                            } else if(fieldValue != null) {
-                                switch (field.getType().getSimpleName()) {
-                                    case "Integer":
-                                        prop.getWriteMethod().invoke(clientMessage, Integer.parseInt(fieldValue));
-                                        break;
-                                    case "String":
-                                        prop.getWriteMethod().invoke(clientMessage, fieldValue);
-                                        break;
-                                    case "MessageType":
-                                        prop.getWriteMethod().invoke(clientMessage, MessageType.valueOf(fieldValue));
-                                        break;
+                        try {
+                            if(field.isAnnotationPresent(HeaderField.class)) {
+                                HeaderField headerField = field.getAnnotation(HeaderField.class);
+                                PropertyDescriptor prop = new PropertyDescriptor(field.getName(), ClientMessage.class);
+                                String fieldValue = headers.get(headerField.name());
+                                if(fieldValue == null && headerField.required()) {
+                                    this.sessionListener.onSessionError(this, new MalformedMessageException(headerField.name()));
+                                } else if(fieldValue != null) {
+                                    switch (field.getType().getSimpleName()) {
+                                        case "Integer":
+                                            prop.getWriteMethod().invoke(clientMessage, Integer.parseInt(fieldValue));
+                                            break;
+                                        case "String":
+                                            prop.getWriteMethod().invoke(clientMessage, fieldValue);
+                                            break;
+                                        case "MessageType":
+                                            prop.getWriteMethod().invoke(clientMessage, MessageType.valueOf(fieldValue));
+                                            break;
+                                    }
                                 }
                             }
+                        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
                         }
                     }
 
@@ -182,12 +187,7 @@ public class Session {
 
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (IntrospectionException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                this.sessionListener.onSessionError(this, new ClientLostException(this.id));
             }
         });
 
