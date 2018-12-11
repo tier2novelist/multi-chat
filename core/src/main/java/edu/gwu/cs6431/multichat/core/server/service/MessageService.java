@@ -35,6 +35,9 @@ public class MessageService {
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
+        responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
+        responseMessage.setPayload("OK".getBytes());
+        responseMessage.setContentLength(responseMessage.getPayload().length);
 
         Session target = SessionService.getInstance().findSessionById(relayMessage.getTo());
         if(target == null) {
@@ -85,6 +88,9 @@ public class MessageService {
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
+        responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
+        responseMessage.setPayload("OK".getBytes());
+        responseMessage.setContentLength(responseMessage.getPayload().length);
 
         source.write(responseMessage);
     }
