@@ -93,6 +93,8 @@ public class ChatServer implements Server {
     public void onSessionError(Session session, Throwable error) {
         if(error instanceof ClientLostException) {
             session.close();
+        } else {
+            error.printStackTrace();
         }
     }
 }
