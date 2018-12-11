@@ -93,6 +93,7 @@ public class Session {
                 if(payload != null) {
                     this.dos.write(payload);
                 }
+                this.dos.flush();
             } catch (SocketException e) {
                 e.printStackTrace();
                 this.sessionListener.onSessionError(this, new ClientLostException(this.id));
@@ -177,7 +178,7 @@ public class Session {
 
                     if(clientMessage.getContentLength() != null && clientMessage.getContentLength() > 0) {
                         byte[] payloadBuffer = new byte[clientMessage.getContentLength()];
-                        dis.read(payloadBuffer);
+                        dis.readFully(payloadBuffer,0, payloadBuffer.length);
                         clientMessage.setPayload(payloadBuffer);
                     }
 

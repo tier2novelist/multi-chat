@@ -185,6 +185,7 @@ public class ChatClient implements Client {
                 if(payload != null) {
                     this.dos.write(payload);
                 }
+                this.dos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -249,7 +250,7 @@ public class ChatClient implements Client {
                         Integer contentLength = ((ResponseMessage) serverMessage).getContentLength();
                         if(contentLength != null && contentLength > 0) {
                             byte[] payloadBuffer = new byte[contentLength];
-                            dis.read(payloadBuffer);
+                            dis.readFully(payloadBuffer,0, payloadBuffer.length);
                             ((ResponseMessage) serverMessage).setPayload(payloadBuffer);
                         }
 
@@ -260,7 +261,7 @@ public class ChatClient implements Client {
                             Integer contentLength = ((RelayMessage) serverMessage).getContentLength();
                             if(contentLength != null && contentLength > 0) {
                                 byte[] payloadBuffer = new byte[contentLength];
-                                dis.read(payloadBuffer);
+                                dis.readFully(payloadBuffer,0, payloadBuffer.length);
                                 ((RelayMessage) serverMessage).setPayload(payloadBuffer);
                             }
                         } else {
