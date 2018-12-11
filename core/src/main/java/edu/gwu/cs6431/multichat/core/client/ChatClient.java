@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -186,12 +187,10 @@ public class ChatClient implements Client {
                     this.dos.write(payload);
                 }
                 this.dos.flush();
+                this.eventListener.onClientMessageSent(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            this.eventListener.onClientMessageSent(message);
-
         };
         this.pool.submit(task);
     }
@@ -265,14 +264,15 @@ public class ChatClient implements Client {
                                 ((RelayMessage) serverMessage).setPayload(payloadBuffer);
                             }
                         } else {
-                          // Do not read when sharing file, payload not presented
+                          // Do not read for payload when sharing file, send a FETCH message to retrieve the payload
                         }
                         this.eventListener.onRelayMessageReceived((RelayMessage) serverMessage);
 
                     }
 
-                } catch (IOException e) {
+                } catch (SocketException e) {
                     e.printStackTrace();
+                    this.stop();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
