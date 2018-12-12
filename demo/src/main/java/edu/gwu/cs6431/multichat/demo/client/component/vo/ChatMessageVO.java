@@ -18,11 +18,12 @@ public class ChatMessageVO extends HBox {
     public ChatMessageVO(ClientMessage message) {
         if(ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
             label.setText(new String(message.getPayload()));
+            this.setAlignment(Pos.BASELINE_RIGHT);
         } else {
             label.setText("FILE SHARED");
+            this.setAlignment(Pos.BASELINE_CENTER);
         }
         this.getChildren().add(this.label);
-        this.setAlignment(Pos.BASELINE_RIGHT);
     }
 
     public ChatMessageVO(RelayMessage message) {
@@ -43,14 +44,21 @@ public class ChatMessageVO extends HBox {
             sb.append(": ");
             sb.append(new String(message.getPayload()));
             label.setText(sb.toString());
+            this.setAlignment(Pos.BASELINE_LEFT);
         } else {
             sb.append(" shares a file");
             if(message.getTo() != null) {
                 sb.append(" with you");
             }
             label.setText(sb.toString());
+            this.setAlignment(Pos.BASELINE_CENTER);
         }
+
+        if(message.getTo() != null) {
+            // set label background to yellow color
+            label.setStyle("-fx-background-color: yellow");
+        }
+
         this.getChildren().add(this.label);
-        this.setAlignment(Pos.BASELINE_LEFT);
     }
 }
