@@ -182,7 +182,7 @@ public class ChatClient implements Client {
 
             try {
                 sb.append(ProtocolProps.LINE_SEPARATOR);
-                this.dos.writeBytes(sb.toString());
+                this.dos.writeUTF(sb.toString());
                 if(payload != null) {
                     this.dos.write(payload);
                 }
