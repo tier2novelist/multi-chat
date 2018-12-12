@@ -140,7 +140,7 @@ public class ClientController implements EventListener {
                         File destFileDir = this.directoryChooser.showDialog(this.shareFileButton.getScene().getWindow());
                         if(destFileDir != null && destFileDir.isDirectory()) {
                             try {
-                                String fileName = StringUtils.join(new Date(),".",message.getContentType());
+                                String fileName = StringUtils.join(new Date().getTime(),".",message.getContentType());
                                 File destFile = new File(destFileDir, fileName);
                                 FileUtils.writeByteArrayToFile(destFile, message.getPayload());
                             } catch (IOException e) {
