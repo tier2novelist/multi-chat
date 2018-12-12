@@ -103,7 +103,7 @@ public class MessageService {
             Session current = iterator.next();
             if(current != source) {
                 sb.append(current.getId());
-                sb.append(System.lineSeparator());
+                sb.append(ProtocolProps.LINE_SEPARATOR);
             }
         }
 

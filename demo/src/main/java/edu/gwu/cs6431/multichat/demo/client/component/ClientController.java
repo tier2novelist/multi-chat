@@ -122,7 +122,7 @@ public class ClientController implements EventListener {
                     if(message.getContentLength() != null && message.getContentLength() > 0) {
                         String userList = new String(message.getPayload());
                         if(StringUtils.isNotEmpty(userList)) {
-                            ObservableList<String> users = FXCollections.observableArrayList(userList.split(System.lineSeparator()));
+                            ObservableList<String> users = FXCollections.observableArrayList(userList.split(ProtocolProps.LINE_SEPARATOR));
                             Platform.runLater(() -> {
                                 userChoiceBox.getItems().clear();
                                 userChoiceBox.getItems().addAll(users);
@@ -180,7 +180,7 @@ public class ClientController implements EventListener {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Fetch File");
                     alert.setHeaderText(null);
-                    alert.setContentText(StringUtils.join("File type: ", message.getContentType(), System.lineSeparator(), "File size: ", message.getContentLength(), " bytes"));
+                    alert.setContentText(StringUtils.join("File type: ", message.getContentType(), ProtocolProps.LINE_SEPARATOR, "File size: ", message.getContentLength(), " bytes"));
 
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK){

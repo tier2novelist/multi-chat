@@ -157,12 +157,12 @@ public class ChatClient implements Client {
                             switch (field.getType().getSimpleName()) {
                                 case "MessageType":
                                     sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((MessageType) fieldValue).name()));
-                                    sb.append(System.lineSeparator());
+                                    sb.append(ProtocolProps.LINE_SEPARATOR);
                                     break;
 
                                     default:
                                         sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
-                                        sb.append(System.lineSeparator());
+                                        sb.append(ProtocolProps.LINE_SEPARATOR);
 
                             }
                         }
@@ -181,7 +181,7 @@ public class ChatClient implements Client {
             }
 
             try {
-                sb.append(System.lineSeparator());
+                sb.append(ProtocolProps.LINE_SEPARATOR);
                 this.dos.writeBytes(sb.toString());
                 if(payload != null) {
                     this.dos.write(payload);

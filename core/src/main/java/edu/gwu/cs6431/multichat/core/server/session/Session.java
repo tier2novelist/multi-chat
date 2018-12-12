@@ -58,19 +58,19 @@ public class Session {
                             switch (field.getType().getSimpleName()) {
                                 case "String":
                                     sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
-                                    sb.append(System.lineSeparator());
+                                    sb.append(ProtocolProps.LINE_SEPARATOR);
                                     break;
                                 case "Integer":
                                     sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, fieldValue));
-                                    sb.append(System.lineSeparator());
+                                    sb.append(ProtocolProps.LINE_SEPARATOR);
                                     break;
                                 case "MessageType":
                                     sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((MessageType) fieldValue).name()));
-                                    sb.append(System.lineSeparator());
+                                    sb.append(ProtocolProps.LINE_SEPARATOR);
                                     break;
                                 case "ResponseStatus":
                                     sb.append(StringUtils.join(headerField.name(), ProtocolProps.HEADER_FIELD_SEPARATOR, ((ResponseStatus) fieldValue).name()));
-                                    sb.append(System.lineSeparator());
+                                    sb.append(ProtocolProps.LINE_SEPARATOR);
                                     break;
                             }
                         }
@@ -88,7 +88,7 @@ public class Session {
                 }
             }
             try {
-                sb.append(System.lineSeparator());
+                sb.append(ProtocolProps.LINE_SEPARATOR);
                 this.dos.writeBytes(sb.toString());
                 if(payload != null) {
                     this.dos.write(payload);
