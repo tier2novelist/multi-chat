@@ -89,7 +89,7 @@ public class Session {
             }
             try {
                 sb.append(ProtocolProps.LINE_SEPARATOR);
-                this.dos.writeUTF(sb.toString());
+                this.dos.write(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(sb.toString()));
                 if(payload != null) {
                     this.dos.write(payload);
                 }
