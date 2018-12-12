@@ -36,7 +36,7 @@ public class MessageService {
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
         responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
-        responseMessage.setPayload("OK".getBytes());
+        responseMessage.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8("OK"));
         responseMessage.setContentLength(responseMessage.getPayload().length);
 
         Session target = SessionService.getInstance().findSessionById(relayMessage.getTo());
@@ -44,7 +44,7 @@ public class MessageService {
             SessionNotExistException sessionNotExistException = new SessionNotExistException(relayMessage.getTo());
             responseMessage.setStatus(ResponseStatus.ERROR);
             responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
-            responseMessage.setPayload(sessionNotExistException.getMessage().getBytes());
+            responseMessage.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(sessionNotExistException.getMessage()));
             responseMessage.setContentLength(responseMessage.getPayload().length);
             source.write(responseMessage);
             throw sessionNotExistException;
@@ -89,7 +89,7 @@ public class MessageService {
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
         responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
-        responseMessage.setPayload("OK".getBytes());
+        responseMessage.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8("OK"));
         responseMessage.setContentLength(responseMessage.getPayload().length);
 
         source.write(responseMessage);
@@ -111,7 +111,7 @@ public class MessageService {
         responseMessage.from(message);
         responseMessage.setStatus(ResponseStatus.OK);
         responseMessage.setContentType(ProtocolProps.TEXT_CONTENT);
-        responseMessage.setPayload(sb.toString().getBytes());
+        responseMessage.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(sb.toString()));
         responseMessage.setContentLength(responseMessage.getPayload().length);
 
         source.write(responseMessage);
@@ -122,7 +122,7 @@ public class MessageService {
         responseMessage.from(message);
 
         // get file id from payload
-        int fileId = Integer.parseInt(new String(message.getPayload()));
+        int fileId = Integer.parseInt(org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload()));
         if(fileId < shareFileList.size()) {
             ClientMessage stagedMessage = shareFileList.get(fileId);
             responseMessage.setContentType(stagedMessage.getContentType());
@@ -137,7 +137,7 @@ public class MessageService {
     }
 
     public void nickname(Session source, ClientMessage message) {
-        source.setNickname(new String(message.getPayload()));
+        source.setNickname(org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload()));
 
         ResponseMessage responseMessage = new ResponseMessage();
         responseMessage.from(message);

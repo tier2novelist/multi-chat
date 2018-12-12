@@ -17,7 +17,7 @@ public class ChatMessageVO extends HBox {
 
     public ChatMessageVO(ClientMessage message) {
         if(ProtocolProps.TEXT_CONTENT.equals(message.getContentType())) {
-            label.setText(new String(message.getPayload()));
+            label.setText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload()));
             this.setAlignment(Pos.BASELINE_RIGHT);
         } else {
             label.setText("FILE SHARED");
@@ -42,7 +42,7 @@ public class ChatMessageVO extends HBox {
                 sb.append(" to you");
             }
             sb.append(": ");
-            sb.append(new String(message.getPayload()));
+            sb.append(org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload()));
             label.setText(sb.toString());
             this.setAlignment(Pos.BASELINE_LEFT);
         } else {

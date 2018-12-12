@@ -79,7 +79,7 @@ public class ChatClient implements Client {
         ClientMessage message = new ClientMessage();
         message.setType(MessageType.CHAT);
         message.setContentType(ProtocolProps.TEXT_CONTENT);
-        message.setPayload(text.getBytes());
+        message.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(text));
         message.setContentLength(message.getPayload().length);
         this.send(message);
     }
@@ -102,7 +102,7 @@ public class ChatClient implements Client {
         ClientMessage message = new ClientMessage();
         message.setType(MessageType.FETCH);
         message.setContentType(ProtocolProps.TEXT_CONTENT);
-        message.setPayload(String.valueOf(fileId).getBytes());
+        message.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(String.valueOf(fileId)));
         message.setContentLength(message.getPayload().length);
         this.send(message);
     }
@@ -115,7 +115,7 @@ public class ChatClient implements Client {
         ClientMessage message = new ClientMessage();
         message.setType(MessageType.NICKNAME);
         message.setContentType(ProtocolProps.TEXT_CONTENT);
-        message.setPayload(nickname.getBytes());
+        message.setPayload(org.apache.commons.codec.binary.StringUtils.getBytesUtf8(nickname));
         message.setContentLength(message.getPayload().length);
         this.send(message);
     }

@@ -120,7 +120,7 @@ public class ClientController implements EventListener {
                     break;
                 case QUERY:
                     if(message.getContentLength() != null && message.getContentLength() > 0) {
-                        String userList = new String(message.getPayload());
+                        String userList = org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload());
                         if(StringUtils.isNotEmpty(userList)) {
                             ObservableList<String> users = FXCollections.observableArrayList(userList.split(ProtocolProps.LINE_SEPARATOR));
                             Platform.runLater(() -> {
@@ -163,7 +163,7 @@ public class ClientController implements EventListener {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
-                alert.setContentText(new String(message.getPayload()));
+                alert.setContentText(org.apache.commons.codec.binary.StringUtils.newStringUtf8(message.getPayload()));
                 alert.showAndWait();
             });
         }
