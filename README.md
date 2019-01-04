@@ -3,8 +3,9 @@
 __Please kindly be reminded to follow [GW Academic Integrity Code](https://studentconduct.gwu.edu/code-academic-integrity) for any reference or use of this repo.__
 
 - Deliverable
-  * [Releases (jar and source code zip)](https://github.com/1988warren/multi-chat/releases)
+  * [Releases](https://github.com/1988warren/multi-chat/releases)
   * [Protocol RFC](https://github.com/1988warren/multi-chat/blob/master/rfc.txt)
+- Demo
   * [Usage](#usage)
   * [Spec](#spec)
   
