@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/1988warren/multi-chat.svg?branch=master)](https://travis-ci.org/1988warren/multi-chat)
+
 # Welcome to this Computer Networking Project (Fall 2018)
 
 __Please kindly be reminded to follow [GW Academic Integrity Code](https://studentconduct.gwu.edu/code-academic-integrity) for any reference or use of this repo.__
