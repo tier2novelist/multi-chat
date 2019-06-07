@@ -5,24 +5,42 @@
 __Please kindly be reminded to follow [GW Academic Integrity Code](https://studentconduct.gwu.edu/code-academic-integrity) for any reference or use of this repo.__
 
 - Deliverable
-  * [Releases](https://github.com/1988warren/multi-chat/releases)
-  * [Protocol RFC](https://github.com/1988warren/multi-chat/blob/master/rfc.txt)
+  * [Artifact Releases](https://github.com/1988warren/multi-chat/releases)
+  * [Protocol RFC](https://github.com/1988warren/multi-chat/blob/spec/rfc.txt)
+  * [Architecture Specs](#spec)
 - Demo
   * [Usage](#usage)
-  * [Spec](#spec)
   
+## Spec
+
+Architecture
+
+- Text Messaging
+
+![text](https://github.com/1988warren/multi-chat/blob/spec/Designs_of_Text_Messaging.svg)
+
+- File Sharing
+
+![file](https://github.com/1988warren/multi-chat/blob/spec/Designs_of_File_Sharing.svg)
+
+- Presentation
+  * [PDF](https://github.com/1988warren/multi-chat/blob/spec/chatroom_presentation.pdf)
+  * [Google Slides](https://docs.google.com/presentation/d/e/2PACX-1vTjtVsFY7YeCoiKiVj9k3T15V7TWpy_qFmHckHJSmGLAJyhZxDrWPs6eKQEQgVmvoxUP8KYXdM4xBNe/pub?start=false&loop=false&delayms=3000)
+
+
 ## Usage
 
-Start Chat Room Server on localhost
+Build Artifact
+```sh
+gradle build
+```
+
+Start Demo Chat Room Server on localhost
 ```sh
 java -cp demo-1.0-RELEASE.jar edu.gwu.cs6431.multichat.demo.server.DemoServer
 ```
 
-Start Chat Room Client
+Start Demo Chat Room Client
 ```sh
 java -jar demo-1.0-RELEASE.jar
 ```
-
-## Spec
-
-[Presentation Slides](https://docs.google.com/presentation/d/e/2PACX-1vTjtVsFY7YeCoiKiVj9k3T15V7TWpy_qFmHckHJSmGLAJyhZxDrWPs6eKQEQgVmvoxUP8KYXdM4xBNe/pub?start=false&loop=false&delayms=3000)
