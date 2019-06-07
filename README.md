@@ -13,7 +13,11 @@ __Please kindly be reminded to follow [GW Academic Integrity Code](https://stude
   
 ## Spec
 
-Architecture
+### Presentation
+  * [PDF](https://github.com/1988warren/multi-chat/blob/spec/chatroom_presentation.pdf)
+  * [Google Slides](https://docs.google.com/presentation/d/e/2PACX-1vTjtVsFY7YeCoiKiVj9k3T15V7TWpy_qFmHckHJSmGLAJyhZxDrWPs6eKQEQgVmvoxUP8KYXdM4xBNe/pub?start=false&loop=false&delayms=3000)
+
+### Architecture
 
 - Text Messaging
 
@@ -22,10 +26,6 @@ Architecture
 - File Sharing
 
 ![file](https://github.com/1988warren/multi-chat/blob/spec/Designs_of_File_Sharing.svg)
-
-- Presentation
-  * [PDF](https://github.com/1988warren/multi-chat/blob/spec/chatroom_presentation.pdf)
-  * [Google Slides](https://docs.google.com/presentation/d/e/2PACX-1vTjtVsFY7YeCoiKiVj9k3T15V7TWpy_qFmHckHJSmGLAJyhZxDrWPs6eKQEQgVmvoxUP8KYXdM4xBNe/pub?start=false&loop=false&delayms=3000)
 
 
 ## Usage
