@@ -42,7 +42,7 @@ java -cp demo-1.0-SNAPSHOT-shaded.jar edu.gwu.cs6431.multichat.demo.server.DemoS
 
 Start Demo Chat Room Client (with JavaFx SDK 21 installed and exposed to PATH)
 ```shell
-java -jar demo-1.0-SNAPSHOT.jar
+java -jar demo-1.0-SNAPSHOT-shaded.jar
 ```
 
 Start With javafx maven plugin
