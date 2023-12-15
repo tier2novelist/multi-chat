@@ -31,16 +31,21 @@ __Please kindly be reminded to follow [GW Academic Integrity Code](https://stude
 ## Usage
 
 Build Artifact
-```sh
-gradle build
+```shell
+mvn compile package
 ```
 
 Start Demo Chat Room Server on localhost
-```sh
-java -cp demo-1.0-RELEASE.jar edu.gwu.cs6431.multichat.demo.server.DemoServer
+```shell
+java -cp demo-1.0-SNAPSHOT-shaded.jar edu.gwu.cs6431.multichat.demo.server.DemoServer
 ```
 
-Start Demo Chat Room Client
-```sh
-java -jar demo-1.0-RELEASE.jar
+Start Demo Chat Room Client (with JavaFx SDK 21 installed and exposed to PATH)
+```shell
+java -jar demo-1.0-SNAPSHOT.jar
+```
+
+Start With javafx maven plugin
+```shell
+mvn clean javafx:run
 ```

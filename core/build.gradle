@@ -1,3 +1,0 @@
-group = 'edu.gwu.cs6431.multi-chat.core'
-version = "${rootProject.version}"
-
